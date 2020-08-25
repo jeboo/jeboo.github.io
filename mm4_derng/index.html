@@ -1,0 +1,120 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="table.css">
+<title>MegaMan/RockMan 4 deRNG Patcher/Randomizer by Stag Shot</title>
+</head>
+MegaMan/RockMan 4 deRNG Patcher/Randomizer by Stag Shot (Stag_Shot on twitch; romhacking.net <a target="_blank" href="http://www.romhacking.net/hacks/5268/">release</a>)<br><br>
+				<body onload="init_tables(false)">
+				<form name="main_form" autocomplete="off">
+                <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="1000000" />
+                <div>
+                    <input type="file" id="fileselect" name="fileselect[]" onchange='openFile(event)' />
+                </div>
+				<hr width="80%" align="left"><hr width="80%" align="left">
+				<table border="1" width="80%" id="dust_table" class="blueTable">
+				<tr id ="dust_stock_row"><td><b>1. Dust Man</b>: stock behavior is 6/24 (25%) of actions are suck attacks.</td>
+				<td>Stock table:</td>
+				</tr>
+				<tr id="dust_patch_row"><td>Sucks:&nbsp;&nbsp;<input type="range" min="0" max="24" value="6" id="dust_attack">&nbsp;&nbsp;&nbsp;&nbsp;<b><span id="dust_attack_val"></span></b></td>
+				<td>Patch table:</td>
+				</tr>
+				<tr><td>Replace sucks with:&nbsp;&nbsp;<input type="radio" name="sucks_repl" id="dust_shot">Shot
+				<input type="radio" name="sucks_repl" id="dust_jump">Jump
+				<input type="radio" name="sucks_repl" id="dust_rnd" checked>Random</td>
+				<td colspan="25">Key: 13 = shot, 14 = jump, 15 = suck</td>
+				</tr>
+				</table>
+				<hr width="80%" align="left">
+				<table border="1" width="80%" id="skull_table" class="blueTable">
+				<tr id="skull_stock_row"><td colspan="1"><b>2. Skull Man</b>: stock behavior is 1/8 (13%) for 0.5s shield.</td>
+				<td>Stock table:</td>
+				</tr>
+				<tr id="skull_patch_row">
+				<td><button type="button" id="skull_min">All 0.5s</button><button type="button" id="skull_max">All 4.3s</button></td>
+				<td>Patch table:</td>
+				</tr>
+				</table>
+				<hr width="80%" align="left">
+				<table border="1" width="80%" id="drill_table" class="blueTable">
+				<tr id="drill_stock_row"><td><b>3. Drill Man</b>: stock behavior is 9/24 (38%) of actions are dives.</td>
+				<td>Stock table:</td></tr>
+				<tr id="drill_patch_row"><td>Dives:&nbsp;&nbsp;<input type="range" min="0" max="24" value="9" id="drill_dives"><b>&nbsp;&nbsp;&nbsp;&nbsp;<span id="drill_dives_val"></span></b></td>
+				<td>Patch table:</td>
+				</tr>
+				<tr><td>Initial action:&nbsp;&nbsp;<input type="radio" name="drill_init" id="drill_i_dive" checked>Dive
+				<input type="radio" name="drill_init" id="drill_i_jump">Jump
+				<input type="radio" name="drill_init" id="drill_i_bombs">Bombs</td>
+				<td colspan="25">Key: 2A = dive, 2F = jump, 30 = bombs</td>
+				</tr>
+				<tr><td>Replace dives with:&nbsp;&nbsp;<input type="radio" name="dives_repl" id="drill_shot">Jump
+				<input type="radio" name="dives_repl" id="drill_jump">Bombs
+				<input type="radio" name="dives_repl" id="drill_rnd" checked>Random</td></tr>
+				</table>
+				<hr width="80%" align="left">
+				<table border="1" width="80%" id="sqmach_table" class="blueTable">
+				<tr id="sqmach_stock_row"><td colspan="1"><b>4. Square Machine</b>: stock behavior is 1-pass (1/8, 13%); 2-pass (3/8, 37%); 3-pass (4/8 ,50%).</td>
+				<td>Stock table:</td>
+				</tr>
+				<tr id="sqmach_patch_row">
+				<td><button type="button" id="sqmach_1">All 1-pass</button><button type="button" id="sqmach_2">All 2-pass</button><button type="button" id="sqmach_3">All 3-pass</button></td>
+				<td>Patch table:</td>
+				</tr>
+				</table>
+				<hr width="80%" align="left">
+				<table border="1" width="80%" id="metman_table" class="blueTable">
+				<tr id="metman_stock_row"><td colspan="1"><b>5. Met Man</b>: stock behavior is open duration of 1-2s, close duration of 3-4s; 50/50 chance.</td>
+				<td>Stock open table:</td>
+				</tr>
+				<tr id="metman_patch_row">
+				<td><button type="button" id="metman_best">Best pattern</button><button type="button" id="metman_worst">Worst pattern</button></td>
+				<td>Patch open table:</td>
+				</tr>
+				</table>
+				<hr width="80%" align="left">
+				<table border="1" width="80%" id="takotrash_table" class="blueTable">
+				<tr id="takotrash_stock_row"><td colspan="1"><b>6. Tako Trash</b>: stock behavior is 50/50 chance of fireball/bomb.</td></tr>
+				<tr><td><input type="radio" name="takotrash_sel" id="tako_fireball">Fireball
+				<input type="radio" name="takotrash_sel" id="tako_bomb">Bomb
+				<input type="radio" name="takotrash_sel" id="tako_rnd" checked>Stock</td>
+				</tr>
+				</table>
+				<hr width="80%" align="left">
+				<table border="1" width="80%" id="wily_table" class="blueTable">
+				<tr id="wily_stock_row"><td><b>7. Dr. Wily</b>: stock behavior is 8 spawn locations.<br>
+				Top 3 (40%), Mid 3 (33%), Btm 2 (27%)<br>
+				Hitbox (1-1.5s) and respawn (1-2.5) stock delays are 50/50.<br></td>
+				<td>Stock table:</td></tr>
+				<tr id="wily_patch_row"><td>
+				Top row:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="range" min="0" max="15" value="6" name="wily_slider" id="wily_slider_1"><b>&nbsp;&nbsp;&nbsp;&nbsp;<span id="wily_trow_1"></span></b>
+				<input type="radio" name="wily_radio" id="wily_row_1">Lock<br>
+				Middle row:&nbsp;&nbsp;<input type="range" min="0" max="15" value="5" name="wily_slider" id="wily_slider_2"><b>&nbsp;&nbsp;&nbsp;&nbsp;<span id="wily_trow_2"></span></b>
+				<input type="radio" name="wily_radio" id="wily_row_2">Lock<br>
+				Bottom row:&nbsp;&nbsp;<input type="range" disabled="true" min="0" max="15" name="wily_slider" value="4" id="wily_slider_3"><b>&nbsp;&nbsp;&nbsp;&nbsp;<span id="wily_trow_3"></span></b>
+				<input type="radio" name="wily_radio" id="wily_row_3" checked>Lock
+				<br></td>
+				<td>Patch table:</td></tr>
+				<tr><td>Hitbox duration:&nbsp;&nbsp;<input type="radio" name="wily_hit" id="wily_hit_1">1s
+				<input type="radio" name="wily_hit" id="wily_hit_2">1.5s
+				<input type="radio" name="wily_hit" id="wily_hit_3" checked>Stock
+				<td colspan="16">Key: 0-2 = upper left..right; 3-5 = middle left..right; 6-7 = bottom left/right</td>
+				</tr>
+				<tr><td>Respawn delay:&nbsp;&nbsp;<input type="radio" name="wily_resp" id="wily_resp_1">1s
+				<input type="radio" name="wily_resp" id="wily_resp_2">2.5s
+				<input type="radio" name="wily_resp" id="wily_resp_3" checked>Stock
+				</tr>
+				</table>
+				<hr width="80%" align="left">
+				<button type="button" title="Restore stock rom values" id="btn_resetstock">Reset to Stock</button>
+				<button type="button" title="Randomize values but don't autogenerate ROM" id="btn_randomize" disabled>Randomize</button>
+				<button type="button" title="Randomize and generate ROM w/o showing values" id="btn_randomizeblind" disabled>Randomize (blind)</button>
+				<hr width="80%" align="left">
+				<div id="submitbutton">
+                    <button type="button" id="genrom">Load USA/JPN ROM</button>
+                </div>
+				</form>
+<script type="text/javascript" src="md5.js"></script>
+<script type="text/javascript" src="hashme.js"></script>
+<script type="text/javascript" src="filedrag.js"></script>
+<script type="text/javascript" src="mm4_derng.js"></script>
+	</body>
+</html>
