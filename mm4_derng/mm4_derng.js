@@ -20,7 +20,8 @@ var stock_skull_array_frames = ['40', 'FF', 'A0', '20', 'FF', '70', '30', '5A'];
 var stock_drill_array = ['2F', '2A', '2F', '30', '2A', '2F', '30', '2F', '30', '2A', '30', '2F', '30', '2A', '2A', '30', '2F', '2A', '2A', '30', '2F', '2F', '2A', '2A'];
 var stock_sqmach_array = [0, 1, 1, 1, 2, 2, 2, 2];
 var stock_metman_array = [[1, 2], [3, 4]];
-var stock_wily_array = [1, 0, 1, 7, 2, 6, 3, 5, 4, 3, 5, 2, 6, 1, 7];
+var wily_init_freqs = [7, 5, 4];
+var stock_wily_array = [1, 0, 1, 7, 2, 6, 3, 5, 4, 3, 5, 2, 6, 1, 7, 0];
 
 var rom;
 var patch_array = [462418, 461420, 463519, 507231, 435042, 435522, 440506, 401980]; // USA; JPN difference is +5 @ 507231
@@ -210,13 +211,13 @@ function init_tables(reset)
 	for(i = 1; i < 4; i++)
 	{
 		var wily_slider = document.getElementById("wily_slider_" + i);
-		wily_slider.value = 7 - i;
+		wily_slider.value = wily_init_freqs[i-1];
 		wily_slider.disabled = i != 3 ? false : true;
-		
-		document.getElementById("wily_row_3").checked = true;
-		document.getElementById("wily_hit_3").checked = true;
-		document.getElementById("wily_resp_3").checked = true;
 	}
+	
+	document.getElementById("wily_row_3").checked = true;
+	document.getElementById("wily_hit_3").checked = true;
+	document.getElementById("wily_resp_3").checked = true;
 	
 	wily_updatevalues();
 }
@@ -513,10 +514,10 @@ function wily_slider(value)
 	if (wily_parent.value < parseInt(wily_parent.name)) { direction = -1; }
 	abschange = (wily_parent.value - wily_parent.name) * direction;
 	
-	// ensure change is valid by adjusting child in opposite direction, and sum of new values + locked < 16
+	// ensure change is valid by adjusting child in opposite direction, and sum of new values + locked < wily_len+1
 	if ((direction > 0 && (c_value - abschange) >= 0) || 
-		  (direction < 0 && (c_value + abschange < 16)) &&
-			(p_value + c_value + l_value < 16 ) )
+		  (direction < 0 && (c_value + abschange < (stock_wily_array.length + 1))) &&
+			(p_value + c_value + l_value < (stock_wily_array.length + 1) ) )
 	{ 
 		wily_parent.name = p_value;
 		wily_parent2 = document.getElementById("wily_trow_" + value);
@@ -528,15 +529,13 @@ function wily_slider(value)
 		wily_child.name = wily_child.value;
 		wily_child2 = document.getElementById("wily_trow_" + j);
 		wily_child2.innerHTML = c_value + " (" + Math.round(c_value/stock_wily_array.length*100) + "%)"; 
-		
-		wily_updatevalues(); 
 	}
 	else
 	{
 		wily_parent.value = parseInt(wily_parent.name);
 	}
 	 
-	
+	wily_updatevalues(); 
 }
 
 function wily_updatevalues()
@@ -558,7 +557,7 @@ function update_wily_tbl()
 {	
 	// update patch table
 	var spawn_array = [[0, 1, 2], [3, 4, 5], [6, 7]];
-	var slider_vals = [], current_array = [];
+	var slider_vals = [];
 	var i, j, k, x;
 	var tbl_data = document.getElementById("wily_table").rows[1].children;
 	var wily_slider;
@@ -566,25 +565,22 @@ function update_wily_tbl()
 	for(i = 0, j = 0; i < 3; i++)
 	{
 		slider_vals[i] = parseInt(document.getElementById("wily_slider_" + (i+1)).value);
-		if(slider_vals[i] == 6-i) { j++; }
+		if (slider_vals[i] == wily_init_freqs[i]) { j++; }
 	}
-	
-	for(i = 0; i < stock_wily_array.length; i++) { current_array[i] = -1; }
 	
 	if(j != 3)
 	{
+		k = 0;
 		for(j = 0; j < 3; j++)
 		{
 			for(i = 0, x = slider_vals[j]; x; k++, x--)
 			{
-				for(k = Math.round(Math.random()*stock_wily_array.length); current_array[k] != -1; k = Math.round(Math.random()*stock_wily_array.length));
-				current_array[k] = 0;
 				tbl_data[2 + k].innerHTML = spawn_array[j][i++];
 				if(i == spawn_array[j].length) { i = 0; }
 			}
 		}
 	}
-	else // if 6,5,4, use stock array
+	else // if 7-5-4, revert to stock array
 	{
 		for(i = 0; i < stock_wily_array.length; i++)
 		{
@@ -611,6 +607,7 @@ function wily_lock(value)
 	{
 		document.getElementById("wily_slider_" + i).disabled = i == value ? true : false;
 	}
+	wily_updatevalues();
 }
 
 wily_row_1.onclick = function() {	
